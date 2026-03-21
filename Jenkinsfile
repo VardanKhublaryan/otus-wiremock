@@ -42,6 +42,10 @@ pipeline {
                     reportBuildPolicy: 'ALWAYS',
                     results: [[path: 'allure-results']]
                 ])
+                always {
+                        // This makes the files 'visible' to the runner_job
+                        archiveArtifacts artifacts: 'target/allure-results/**', allowEmptyArchive: true
+                    }
             }
         }
     }
