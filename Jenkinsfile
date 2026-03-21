@@ -1,5 +1,6 @@
 pipeline {
     agent { label 'maven' }
+
     tools {
         // This MUST match the 'Name' you gave it in the Global Tools section
         allure 'Allure 2.30'
@@ -23,34 +24,30 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                // Run tests but do not fail the pipeline if there are test errors
-                sh """
-                mvn clean test
-                """
+                sh "mvn clean test || true"
             }
         }
 
         stage('Allure Report Publisher') {
             steps {
                 echo "Publishing Allure results..."
-                sh 'allure generate --clean allure-report'
-
-                // Allure stage will always run even if tests had errors
                 allure([
                     includeProperties: false,
                     jdk: '',
                     properties: [],
                     reportBuildPolicy: 'ALWAYS',
-                    results: [[path: 'allure-results']]
+                    // CHANGE THIS: Since this is the direct test job,
+                    // Maven puts results in target/allure-results
+                    results: [[path: 'target/allure-results']]
                 ])
-
             }
         }
     }
 
     post {
         always {
-            echo "Pipeline finished"
+            // Archive the actual results produced by Maven
+            archiveArtifacts artifacts: 'target/allure-results/**', allowEmptyArchive: true
         }
     }
 }
