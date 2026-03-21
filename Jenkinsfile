@@ -34,6 +34,9 @@ pipeline {
             steps {
                 echo "Publishing Allure results..."
                 sh 'allure generate --clean allure-report'
+                 always {
+                  archiveArtifacts artifacts: 'target/allure-results/**', allowEmptyArchive: true
+                   }
                 // Allure stage will always run even if tests had errors
                 allure([
                     includeProperties: false,
@@ -42,10 +45,7 @@ pipeline {
                     reportBuildPolicy: 'ALWAYS',
                     results: [[path: 'allure-results']]
                 ])
-                always {
-                        // This makes the files 'visible' to the runner_job
-                        archiveArtifacts artifacts: 'target/allure-results/**', allowEmptyArchive: true
-                    }
+
             }
         }
     }
