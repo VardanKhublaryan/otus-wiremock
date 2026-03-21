@@ -38,7 +38,7 @@ pipeline {
                     reportBuildPolicy: 'ALWAYS',
                     // CHANGE THIS: Since this is the direct test job,
                     // Maven puts results in target/allure-results
-                    results: [[path: 'target/allure-results']]
+                    results: [[path: 'allure-results']]
                 ])
             }
         }
